@@ -116,7 +116,7 @@ export function Compose({
     const end = textarea.selectionEnd;
     const newValue = body.slice(0, start) + text + body.slice(end);
     setBody(newValue);
-    
+
     // Set cursor position after inserted text
     setTimeout(() => {
       textarea.selectionStart = textarea.selectionEnd = start + text.length;
@@ -127,8 +127,8 @@ export function Compose({
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>, type: "file" | "image") => {
     const files = e.target.files;
     if (!files) return;
-    
-    const newAttachments: Attachment[] = Array.from(files).map(file => ({
+
+    const newAttachments: Attachment[] = Array.from(files).map((file) => ({
       name: file.name,
       size: formatFileSize(file.size),
       type,
