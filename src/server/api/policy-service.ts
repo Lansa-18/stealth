@@ -43,3 +43,30 @@ export async function setSenderRule(
     sender,
   };
 }
+
+export async function evaluateMailboxPolicy(
+  repository: ApiRepository,
+  input: {
+    owner: string;
+    postage: string;
+    sender: string;
+    verified: boolean;
+  },
+) {
+  const rule = await repository.getSenderRule(input.owner, input.sender);
+  if (rule === "allow") return { allowed: true, reason: "sender_allowed" as const, rule };
+  if (rule === "block") return { allowed: false, reason: "sender_blocked" as const, rule };
+
+  const { policy } = await getMailboxPolicy(repository, input.owner);
+  if (!policy.allowUnknown) {
+    return { allowed: false, policy, reason: "unknown_senders_disabled" as const, rule };
+  }
+  if (policy.requireVerified && !input.verified) {
+    return { allowed: false, policy, reason: "verification_required" as const, rule };
+  }
+  if (BigInt(input.postage) < BigInt(policy.minimumPostage)) {
+    return { allowed: false, policy, reason: "insufficient_postage" as const, rule };
+  }
+
+  return { allowed: true, policy, reason: "policy_satisfied" as const, rule };
+}

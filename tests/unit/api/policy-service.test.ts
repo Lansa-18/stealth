@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { MemoryApiRepository } from "../../../src/server/api/memory-repository";
 import {
+  evaluateMailboxPolicy,
   getMailboxPolicy,
   getSenderRule,
   setMailboxPolicy,
@@ -53,5 +54,37 @@ describe("mailbox policy service", () => {
     await expect(getSenderRule(repository, owner, sender)).resolves.toMatchObject({
       rule: "default",
     });
+  });
+
+  it("evaluates explicit rules before mailbox defaults", async () => {
+    const repository = new MemoryApiRepository();
+    await setSenderRule(repository, owner, sender, "allow");
+
+    await expect(
+      evaluateMailboxPolicy(repository, {
+        owner,
+        postage: "0",
+        sender,
+        verified: false,
+      }),
+    ).resolves.toMatchObject({ allowed: true, reason: "sender_allowed" });
+  });
+
+  it("enforces verification and minimum postage for unknown senders", async () => {
+    const repository = new MemoryApiRepository();
+    await setMailboxPolicy(repository, owner, {
+      allowUnknown: true,
+      minimumPostage: "100",
+      requireVerified: true,
+    });
+
+    await expect(
+      evaluateMailboxPolicy(repository, {
+        owner,
+        postage: "99",
+        sender,
+        verified: true,
+      }),
+    ).resolves.toMatchObject({ allowed: false, reason: "insufficient_postage" });
   });
 });
