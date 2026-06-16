@@ -30,6 +30,8 @@ export type MailLocation = Exclude<MailFolder, VirtualMailFolder>;
  */
 export type SenderPolicy = "allow" | "verify" | "block";
 
+export type ReceiptState = "none" | "pending" | "sent";
+
 export type Email = {
   id: string;
   from: string;
@@ -46,6 +48,7 @@ export type Email = {
   avatarColor: string;
   event?: MailEvent;
   senderPolicy?: SenderPolicy;
+  receiptState?: ReceiptState;
 };
 
 export type MailFilters = {
@@ -147,6 +150,7 @@ export const emails: Email[] = [
       { name: "motion-principles.key", size: "12.1 MB", type: "key" },
     ],
     avatarColor: c(0),
+    receiptState: "sent",
   },
   {
     id: "2",
@@ -213,6 +217,7 @@ export const emails: Email[] = [
     folder: "inbox",
     labels: ["Investors", "Postage"],
     avatarColor: c(3),
+    receiptState: "pending",
   },
   {
     id: "5",
