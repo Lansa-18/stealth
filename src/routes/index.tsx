@@ -638,7 +638,7 @@ function MailApp({ isDemoMode }: { isDemoMode?: boolean }) {
                 maxSize={20}
                 collapsible
                 onCollapse={() => setLayout({ sidebarCollapsed: true })}
-                onResize={() => setLayout({ sidebarCollapsed: false })}
+                onExpand={() => setLayout({ sidebarCollapsed: false })}
                 className={cn(
                   layout.sidebarCollapsed && "min-w-[50px] transition-all duration-300 ease-in-out",
                 )}
@@ -760,7 +760,7 @@ function MailApp({ isDemoMode }: { isDemoMode?: boolean }) {
                           collapsible
                           collapsedSize={0}
                           onCollapse={() => setLayout({ rightPanelCollapsed: true })}
-                          onResize={() => setLayout({ rightPanelCollapsed: false })}
+                          onExpand={() => setLayout({ rightPanelCollapsed: false })}
                         >
                           <RightPanel
                             email={selected}
