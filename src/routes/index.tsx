@@ -443,9 +443,7 @@ function MailApp({ isDemoMode }: { isDemoMode?: boolean }) {
     if (!selectedId) return;
     const cur = emails.find((e) => e.id === selectedId);
     if (cur?.unread) updateEmail(selectedId, { unread: false });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedId]);
-
   const runCommand = useCallback(
     (id: CommandId, overrideEmail?: Email) => {
       const email = overrideEmail ?? selected;
