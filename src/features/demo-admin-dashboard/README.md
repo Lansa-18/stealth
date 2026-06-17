@@ -91,34 +91,26 @@ The dashboard exposes these tabbed sections:
 
 ## Message templates (`./templates`)
 
-The **Templates** section renders `TemplatePicker`: an admin surface for choosing a pre-written message template and inserting it into the draft dataset that will populate the demo inbox.
+The **Templates** section renders `TemplatePicker`: an admin surface for choosing a
+pre-written message template and inserting it into the draft dataset that will populate
+the demo inbox.
 
-- `templates/messageTemplates.ts` — deterministic, fake template fixtures. Recipients use the reserved `*stealth.demo` handle or `example.com`/`example.org` domains so nothing references real people or live addresses (a test enforces this).
-- `templates/templateSearch.ts` — `searchTemplates(templates, query)` is a ranked, case-insensitive substring search (name/subject hits outrank tag/description hits).
-- `templates/templateToDraft.ts` — pure, non-mutating helpers that map a template onto the existing `Draft` shape (`./types/draft`) and `insertTemplate` / `removeDraft` the dataset, with duplicate-insert validation.
-- `templates/TemplatePicker.tsx` — searchable list, detail preview (subject, recipients, body, tags), an **Insert draft** action that disables once a template is in the dataset, and the running draft dataset with per-row remove.
+- `templates/messageTemplates.ts` — deterministic, fake template fixtures. Recipients use
+  the reserved `*stealth.demo` handle or `example.com`/`example.org` domains so nothing
+  references real people or live addresses (a test enforces this).
+- `templates/templateSearch.ts` — `searchTemplates(templates, query)` is a ranked,
+  case-insensitive substring search (name/subject hits outrank tag/description hits).
+- `docs/CAMPAIGN_COPY_RULES.md` — campaign copy rules for demo messages and internal
+  notes, with examples and a review checklist.
+- `templates/templateToDraft.ts` — pure, non-mutating helpers that map a template onto the
+  existing `Draft` shape (`./types/draft`) and `insertTemplate` / `removeDraft` the dataset,
+  with duplicate-insert validation.
+- `templates/TemplatePicker.tsx` — searchable list, detail preview (subject, recipients,
+  body, tags), an **Insert draft** action that disables once a template is in the dataset,
+  and the running draft dataset with per-row remove.
 
----
-
-## Campaign Snapshots (`./components/CampaignSnapshots.tsx`)
-
-The **Campaigns** section renders `CampaignSnapshots`: an admin interface for taking snapshots of the currently built draft dataset, listing saved campaign snapshots, displaying detailed metadata, and restoring previous campaign draft states.
-
-- **Snapshots List**: Renders saved campaign snapshots (preloaded defaults and custom ones) with metadata (name, description, target audience, tags, timestamp, and contained drafts count/subjects).
-- **Save Snapshot**: Allows saving the active draft dataset as a new campaign snapshot with custom name, description, target audience, and tags.
-- **Restore Confirmation**: Restoring a snapshot prompts a confirmation alert detailing the active/target draft counts to prevent accidental overwrite of active draft states.
-- **Persistence**: Active draft dataset and campaign snapshots are saved in browser's local storage under unique namespaces (`demoAdminDraftDataset` and `demoAdminCampaignSnapshots`), falling back to default snapshots if empty.
-
----
-
-## Campaign Display Tokens (`./constants/displayTokens.ts`)
-
-Display tokens are folder-local constants used to color-code campaign statuses, tag keywords, and target audiences.
-
-- **Status Tokens**: Mapping for `"active"`, `"draft"`, `"needs-review"`, and `"archived"` statuses.
-- **Tag Tokens**: Semantic colors for specific update categories (`"onboarding"`, `"welcome"`, `"stellar"`, `"security"`, `"alert"`, `"newsletter"`, `"marketing"`, `"announcement"`), with custom inputs falling back to neutral styles.
-- **Audience Tokens**: Styles for target segments (`"New Signups"`, `"High-Value Accounts"`, `"Newsletter Subscribers"`), falling back to a purple theme for arbitrary custom groups.
-- **Interactive Documentation**: A collapsible panel displaying examples of all tokens with real-time badge renderings is embedded directly at the bottom of the Campaigns tab.
+`TemplatePicker` accepts an optional `onDatasetChange(dataset: Draft[])` callback so a
+parent can observe drafts as they accumulate.
 
 ### Follow-up integration (out of scope here)
 
