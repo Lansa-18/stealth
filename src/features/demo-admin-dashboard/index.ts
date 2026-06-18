@@ -117,3 +117,12 @@ export {
   type SnoozePresetId,
   type SnoozedDemoMessage,
 } from "./snooze";
+
+export {
+  type SenderPolicy,
+  type SenderPersona,
+  defaultSenderPersonas,
+  SenderPersonaSelector,
+  SenderPersonaEditor,
+  validateSenderPersona,
+} from "./senderPersonas";
