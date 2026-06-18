@@ -14,23 +14,36 @@ function PolicyEditorPage() {
   const [minimumPostage, setMinimumPostage] = useState(0.01);
   const [isSaving, setIsSaving] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
-  
+
   const { notify } = useFeedback();
 
   const simulateSender = (type: "trusted" | "blocked" | "verified" | "unverified") => {
-    if (type === "trusted") return { allowed: true, reason: "Sender is explicitly trusted in contact list." };
-    if (type === "blocked") return { allowed: false, reason: "Sender is explicitly blocked." };
-    
-    if (!allowUnknown) return { allowed: false, reason: "Unknown senders are disabled completely." };
-    if (requireVerified && type === "unverified") return { allowed: false, reason: "Sender lacks verified cryptographic identity." };
-    if (minimumPostage > 0) return { allowed: true, reason: `Allowed if sender attaches >= ${minimumPostage.toFixed(3)} XLM postage.` };
+    if (type === "trusted") {
+      return { allowed: true, reason: "Sender is explicitly trusted in contact list." };
+    }
+    if (type === "blocked") {
+      return { allowed: false, reason: "Sender is explicitly blocked." };
+    }
+
+    if (!allowUnknown) {
+      return { allowed: false, reason: "Unknown senders are disabled completely." };
+    }
+    if (requireVerified && type === "unverified") {
+      return { allowed: false, reason: "Sender lacks verified cryptographic identity." };
+    }
+    if (minimumPostage > 0) {
+      return {
+        allowed: true,
+        reason: `Allowed if sender attaches >= ${minimumPostage.toFixed(3)} XLM postage.`,
+      };
+    }
     return { allowed: true, reason: "Allowed freely without restrictions." };
   };
 
   const payload = {
     allowUnknown,
     requireVerified,
-    minimumPostage: minimumPostage.toString()
+    minimumPostage: minimumPostage.toString(),
   };
 
   const handleSave = async () => {
@@ -40,7 +53,7 @@ function PolicyEditorPage() {
       const res = await fetch("/api/v1/policy", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
@@ -60,14 +73,16 @@ function PolicyEditorPage() {
       <div className="max-w-6xl mx-auto space-y-8">
         <div>
           <h1 className="text-3xl font-bold">Mailbox Policy Editor</h1>
-          <p className="text-muted-foreground mt-2">Tune your inbox admission rules and preview the live impact.</p>
+          <p className="text-muted-foreground mt-2">
+            Tune your inbox admission rules and preview the live impact.
+          </p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-8">
           <Surface className="p-6 space-y-8 h-fit">
             <div>
               <h2 className="text-xl font-semibold mb-6">Policy Controls</h2>
-              
+
               <div className="space-y-8">
                 <div className="flex items-center justify-between">
                   <div>
@@ -76,11 +91,19 @@ function PolicyEditorPage() {
                       If disabled, only explicitly trusted contacts can reach you. All others are blocked.
                     </p>
                   </div>
-                  <button 
+                  <button
                     onClick={() => setAllowUnknown(!allowUnknown)}
-                    className={cn("relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors", allowUnknown ? "bg-emerald-500" : "bg-white/20")}
+                    className={cn(
+                      "relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors",
+                      allowUnknown ? "bg-emerald-500" : "bg-white/20"
+                    )}
                   >
-                    <span className={cn("inline-block h-4 w-4 transform rounded-full bg-white transition-transform", allowUnknown ? "translate-x-6" : "translate-x-1")} />
+                    <span
+                      className={cn(
+                        "inline-block h-4 w-4 transform rounded-full bg-white transition-transform",
+                        allowUnknown ? "translate-x-6" : "translate-x-1"
+                      )}
+                    />
                   </button>
                 </div>
 
@@ -91,12 +114,21 @@ function PolicyEditorPage() {
                       Unknown senders must prove their cryptographic identity. Unverified mail is rejected.
                     </p>
                   </div>
-                  <button 
+                  <button
                     onClick={() => setRequireVerified(!requireVerified)}
                     disabled={!allowUnknown}
-                    className={cn("relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors", requireVerified && allowUnknown ? "bg-emerald-500" : "bg-white/20", !allowUnknown && "opacity-50 cursor-not-allowed")}
+                    className={cn(
+                      "relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors",
+                      requireVerified && allowUnknown ? "bg-emerald-500" : "bg-white/20",
+                      !allowUnknown && "opacity-50 cursor-not-allowed"
+                    )}
                   >
-                    <span className={cn("inline-block h-4 w-4 transform rounded-full bg-white transition-transform", requireVerified && allowUnknown ? "translate-x-6" : "translate-x-1")} />
+                    <span
+                      className={cn(
+                        "inline-block h-4 w-4 transform rounded-full bg-white transition-transform",
+                        requireVerified && allowUnknown ? "translate-x-6" : "translate-x-1"
+                      )}
+                    />
                   </button>
                 </div>
 
@@ -108,13 +140,18 @@ function PolicyEditorPage() {
                   <p className="text-xs text-muted-foreground mt-1 mb-4">
                     Required deposit from unknown senders to discourage spam.
                   </p>
-                  <input 
-                    type="range" 
-                    min="0" max="1" step="0.005"
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.005"
                     disabled={!allowUnknown}
                     value={minimumPostage}
                     onChange={(e) => setMinimumPostage(parseFloat(e.target.value))}
-                    className={cn("w-full accent-primary", !allowUnknown && "opacity-50 cursor-not-allowed")}
+                    className={cn(
+                      "w-full accent-primary",
+                      !allowUnknown && "opacity-50 cursor-not-allowed"
+                    )}
                   />
                 </div>
               </div>
@@ -133,10 +170,13 @@ function PolicyEditorPage() {
                 <Shield className="w-5 h-5 text-sky-400" /> Live Simulator
               </h2>
               <div className="space-y-3">
-                {(["trusted", "blocked", "verified", "unverified"] as const).map(type => {
+                {(["trusted", "blocked", "verified", "unverified"] as const).map((type) => {
                   const result = simulateSender(type);
                   return (
-                    <div key={type} className="flex items-start gap-4 p-3 rounded-lg border border-white/5 bg-white/[0.02]">
+                    <div
+                      key={type}
+                      className="flex items-start gap-4 p-3 rounded-lg border border-white/5 bg-white/[0.02]"
+                    >
                       <div className="mt-0.5">
                         {result.allowed ? (
                           <Check className="w-5 h-5 text-emerald-400" />
